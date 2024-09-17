@@ -1,9 +1,14 @@
 import React,{useState,ChangeEvent,FormEvent,useEffect} from 'react'
 import styles from './TaskForm.module.css'
 import {ITask} from '../../interfaces/ITask'
-type Props = {btnText: string}
 
-const TaskForm = ({btnText}: Props) =>{
+type Props = {
+    btnText: string
+    taskList: ITask[]
+    setTaskList?: React.Dispatch<React.SetStateAction<ITask[]>>
+}
+
+const TaskForm = ({btnText,taskList,setTaskList}: Props) =>{
 
   const [id,setId] =useState<number>(0)
   const [title,setTitle] =useState<string>("")
@@ -16,19 +21,28 @@ const TaskForm = ({btnText}: Props) =>{
         setdifficulty(Number(e.target.value))
     }
   }
-  const addTaskHandler = () => {
+  const addTaskHandler = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
+    const id =Math.floor(Math.random() * 1000)
+    const newTask: ITask={id,title,difficulty}
+
+    //Esta adicionando todas as task e a new task. A ! fala que é certeza que vai vir
+    setTaskList!([...taskList,newTask])
+
+    setTitle("")
+    setdifficulty(0)
   }
 
   return (
     <form onSubmit={addTaskHandler} className={styles.form}>
         <div className={styles.input_container}>
             <label htmlFor='title'>Título</label>
-            <input type="text" name="title" placeholder='Titulo da tarefa' onChange={handleChange}/>
+            <input value={title} type="text" name="title" placeholder='Titulo da tarefa' onChange={handleChange}/>
         </div>
         <div className={styles.input_container}>
             <label htmlFor='difficulty'>Dificuldade</label>
-            <input type="text" name="difficulty" placeholder='Dificuldade da tarefa'  onChange={handleChange}/>
+            <input value={difficulty} type="text" name="difficulty" placeholder='Dificuldade da tarefa'  onChange={handleChange}/>
         </div>
         <input type='submit' value={btnText} />
     </form>
